@@ -1,3 +1,5 @@
 node_modules/
 .env
 npm-debug.log
+assets/
+gambar-besar-1line.txt
