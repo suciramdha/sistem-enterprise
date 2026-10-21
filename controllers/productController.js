@@ -58,6 +58,13 @@ async function index(req, res) {
 async function getById(req, res) {
     try {
         const product = await productModel.getProductById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "Produk tidak ditemukan"
+            });
+        }
+
         res.json({
             message: "Berhasil mengambil data produk",
             data: product
@@ -66,7 +73,7 @@ async function getById(req, res) {
         res.status(500).json({
             message: "Gagal mengambil data produk",
             error: error.message
-        })
+        });
     }
 }
 // POST tambah product
