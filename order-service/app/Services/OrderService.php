@@ -6,6 +6,7 @@ use App\Clients\CartServiceClient;
 use App\Clients\ProductServiceClient;
 use App\Exceptions\EmptyCartException;
 use App\Exceptions\InsufficientStockException;
+use App\Exceptions\OrderAlreadyPaidException;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -43,7 +44,7 @@ class OrderService
             $stock = (int) $product['stock'];
             $unitPrice = (float) $product['price'];
 
-            // 4. Periksa apakah stok mencukupi
+            // 4. Pastikan stok produk mencukupi
             if ($quantity > $stock) {
                 throw new InsufficientStockException(
                     "Stok {$product['name']} tidak mencukupi: " .
@@ -51,7 +52,7 @@ class OrderService
                 );
             }
 
-            // 5. Hitung subtotal
+            // 5. Hitung subtotal setiap item
             $subtotal = $unitPrice * $quantity;
 
             $orderItems[] = [
@@ -65,7 +66,7 @@ class OrderService
             $totalAmount += $subtotal;
         }
 
-        // 6. Simpan order dan item dalam satu transaksi database
+        // 6. Simpan order dan seluruh item dalam satu transaksi database
         $order = DB::transaction(function () use (
             $userId,
             $orderItems,
@@ -105,8 +106,10 @@ class OrderService
         return Order::with('items')->find($id);
     }
 
-    public function getOrdersByUser(int $userId, ?string $status = null)
-    {
+    public function getOrdersByUser(
+        int $userId,
+        ?string $status = null
+    ) {
         $query = Order::with('items')
             ->where('user_id', $userId);
 
@@ -119,6 +122,13 @@ class OrderService
 
     public function payOrder(Order $order): Order
     {
+        // Hanya order PENDING yang boleh dibayar
+        if ($order->status !== 'PENDING') {
+            throw new OrderAlreadyPaidException(
+                'Pesanan sudah dibayar.'
+            );
+        }
+
         $order->update([
             'status' => 'PAID',
         ]);
