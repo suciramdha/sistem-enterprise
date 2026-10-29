@@ -14,6 +14,8 @@ Route::post('/orders', [OrderController::class, 'store']);
 
 Route::get('/orders/user/{userId}', [OrderController::class, 'getByUser']);
 
-Route::get('/orders/{id}', [OrderController::class, 'show']);
+Route::get('/orders/{id}', [OrderController::class, 'show'])
+    ->whereNumber('id');
 
-Route::patch('/orders/{id}/pay', [OrderController::class, 'pay']);
+Route::patch('/orders/{id}/pay', [OrderController::class, 'pay'])
+    ->whereNumber('id');

@@ -12,7 +12,10 @@ class CartServiceClient
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.cart_service.url'), '/');
+        $this->baseUrl = rtrim(
+            config('services.cart_service.url'),
+            '/'
+        );
     }
 
     public function getCart(int $userId): array
