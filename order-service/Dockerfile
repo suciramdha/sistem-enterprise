@@ -22,4 +22,4 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 EXPOSE 3003
 
 # Jalankan migration terlebih dahulu, lalu Order Service pada port 3003.
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=3003"]
+CMD ["sh", "-c", "export PRODUCT_SERVICE_URL=http://product-service:3000 && export CART_SERVICE_URL=http://cart-service:3001 && php artisan optimize:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=3003"]

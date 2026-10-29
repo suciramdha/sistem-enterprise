@@ -46,6 +46,7 @@ services:
       - DB_DATABASE=cartdb
       - DB_USERNAME=appuser
       - DB_PASSWORD=apppassword
+      - PRODUCT_SERVICE_URL=http://product-service:3000
       - LOG_CHANNEL=stderr
     depends_on:
       cart-db:

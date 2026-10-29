@@ -13,7 +13,10 @@ class ProductServiceClient
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.product_service.url'), '/');
+        $this->baseUrl = rtrim(
+            config('services.product_service.url'),
+            '/'
+        );
     }
 
     public function getProduct(int $productId): array
